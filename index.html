@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beija-flor Adventure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { background: skyblue; display: block; margin: auto; }
+        button { margin-top: 10px; padding: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Beija-flor Adventure</h1>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <button id="restartButton" style="display:none;">Reiniciar Jogo</button>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const restartButton = document.getElementById("restartButton");
+
+        let beijaFlor = { x: 50, y: 300, width: 30, height: 30, velocityY: 0, jumping: false };
+        let gravity = 0.5;
+        let obstacleSpeed = 5;
+        let obstacles = [{ x: 800, y: 320, width: 30, height: 30 }];
+        let clouds = [{ x: 600, y: 100, width: 50, height: 30 }];
+        let gameRunning = true;
+        let flipped = true;
+        let jumps = 0;
+
+        function drawBeijaFlor() {
+            ctx.font = "30px Arial";
+            ctx.save();
+            ctx.translate(beijaFlor.x + beijaFlor.width / 2, beijaFlor.y + beijaFlor.height / 2);
+            ctx.scale(flipped ? -1 : 1, 1);
+            ctx.fillText("🐦", -beijaFlor.width / 2, beijaFlor.height / 2);
+            ctx.restore();
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = "brown";
+            obstacles.forEach(obs => ctx.fillRect(obs.x, obs.y, obs.width, obs.height));
+        }
+
+        function drawClouds() {
+            ctx.fillStyle = "white";
+            clouds.forEach(cloud => ctx.fillRect(cloud.x, cloud.y, cloud.width, cloud.height));
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            beijaFlor.velocityY += gravity;
+            beijaFlor.y += beijaFlor.velocityY;
+            
+            if (beijaFlor.y > 300) {
+                beijaFlor.y = 300;
+                beijaFlor.jumping = false;
+                jumps = 0;
+            }
+
+            if (beijaFlor.y <= 0) {
+                gameRunning = false;
+                restartButton.style.display = "block";
+            }
+
+            obstacles.forEach(obs => {
+                obs.x -= obstacleSpeed;
+                if (obs.x + obs.width < 0) obs.x = 800;
+                if (beijaFlor.x < obs.x + obs.width &&
+                    beijaFlor.x + beijaFlor.width > obs.x &&
+                    beijaFlor.y < obs.y + obs.height &&
+                    beijaFlor.y + beijaFlor.height > obs.y) {
+                    gameRunning = false;
+                    restartButton.style.display = "block";
+                }
+            });
+
+            clouds.forEach(cloud => {
+                cloud.x -= obstacleSpeed / 2;
+                if (cloud.x + cloud.width < 0) cloud.x = 800;
+                if (beijaFlor.x < cloud.x + cloud.width &&
+                    beijaFlor.x + beijaFlor.width > cloud.x &&
+                    beijaFlor.y < cloud.y + cloud.height &&
+                    beijaFlor.y + beijaFlor.height > cloud.y) {
+                    gameRunning = false;
+                    restartButton.style.display = "block";
+                }
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawClouds();
+            drawBeijaFlor();
+            drawObstacles();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            if (gameRunning) requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space") {
+                beijaFlor.velocityY = -10;
+                jumps++;
+                beijaFlor.jumping = true;
+            }
+        });
+
+        restartButton.addEventListener("click", () => {
+            beijaFlor = { x: 50, y: 300, width: 30, height: 30, velocityY: 0, jumping: false };
+            obstacles = [{ x: 800, y: 320, width: 30, height: 30 }];
+            clouds = [{ x: 600, y: 100, width: 50, height: 30 }];
+            obstacleSpeed = 5;
+            gameRunning = true;
+            jumps = 0;
+            restartButton.style.display = "none";
+            gameLoop();
+        });
+
+        setInterval(() => {
+            obstacleSpeed += 1;
+        }, 3000);
+
+        gameLoop();
+    </script>
+</body>
+</html>
+
