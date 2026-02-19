@@ -1,0 +1,10 @@
+- Crie o HTML, CSS e JS no mesmo arquivo de um jogo clone do Cat Mario, no lugar do Cat, coloca um emoji de um Beija-flor
+- Adicione um botão para reiniciar o jogo caso perca.
+- Aumente a velocidade dos blocos a cada 5 segundos.
+- Vire o beija-flor para o outro lado.
+- Aumente a velocidade a cada 3 segundos
+- Adicione nuvens no céu para ficar bonito que também podem me matar se eu encostar
+- Se eu pressionar para pular 2x enquanto o beija-flor ainda está no ar, ele deve dar pulo duplo, triplo, ou quantas vezes eu aperta.
+- Se ele encostar no topo da tela, ele também morre.
+- Adicione outras aves de outra cor voando em direção contrária, que eu possa atingir da mesma forma que o bloco e as nuvens
+- Coloque as aves e as nuvens voando em velocidades diferentes do bloco
